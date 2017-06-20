@@ -4,19 +4,11 @@ var expect = require('chai').expect;
 var marked = require('marked')
 var chai = require('chai');
 var spies = require ('chai-spies');
+chai.should();
+chai.use(require('chai-things'));
 
 
 describe('Page model', function () {
-  // beforeEach(function(done){
-  //   User.sync({force:true})
-  //   .then(function(){
-  //     return Page.sync({force:true})
-  //   })
-  //   .then(done)
-  //   .catch(function(){
-  //     return done();
-  //   })
-  // })
 
   describe('Virtuals', function () {
     var page;
@@ -71,37 +63,59 @@ it('does not get pages without the search tag', function (done) {
   })
   .catch(done);
 });
-      // it('gets pages with the search tag',function(done){
-      //   Page.findByTag('bar')
-      //   .then(function(pages){
-      //     expect(pages).to.have.lengthOf(1);
-      //     done();
-      //
-      // }).catch(done);
-      // });
-      //
-      // it('does not get pages without the search tag',function(done){
-      //   Page.findByTag('hello')
-      //   .then(function(pages){
-      //     expect(pages).to.have.lengthOf(0);
-      //     done()
-      //
-      // }).catch(done);
-      // });
 
     });
   });
 
   describe('Instance methods', function () {
+    var basepage=Page.create({
+      title: 'foo',
+      content: 'bar',
+      tags: ['foo', 'bar']
+    })
+      .then(function () {
+        done();
+    })
+      .catch(done);
+    });
+    var sharedpage=Page.create({
+      title: 'foo',
+      content: 'hello',
+      tags: ['foo', 'hello']
+    })
+      .then(function () {
+        done();
+    })
+      .catch(done);
+    });
+    var nosharedpage=Page.create({
+      title: 'hello',
+      content: 'bye',
+      tags: ['hello', 'bye']
+    })
+      .then(function () {
+        done();
+    })
+      .catch(done);
+    });
     describe('findSimilar', function () {
-      it('never gets itself');
-      it('gets other pages with any common tags');
+      it('never gets itself',function(){
+        basepage.findSimilar()
+        .then(function(pages){
+          console.log('pages',pages)
+          expect(pages).notInclude(basepage)
+        })
+      });
+      it('gets other pages with any common tags',function(){
+
+      });
       it('does not get other pages without any common tags');
     });
   });
 
   describe('Validations', function () {
     it('errors without title');
+
     it('errors without content');
     it('errors given an invalid status');
   });
